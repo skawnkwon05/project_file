@@ -305,9 +305,13 @@ while True:
         print(f"{명령}쪽으로 이동했어. {현재장소}에 도착했어.")
         print(f"HP: {protagonist['HP']}")
 
-        # 장소 상호작용
+    elif 명령 == "상호작용":
+        현재장소 = game_map[protagonist["현재위치"]]
         if 현재장소 in 장소상호작용:
             상점(현재장소)
+        else:
+            print("여기서는 상호작용할 수 없어.")
+        
 
     else:
         print("북/남/동/서/가방/상태/저장/불러오기/end/exit 중에서 입력해줘.")
