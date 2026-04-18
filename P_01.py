@@ -209,10 +209,19 @@ def 가방보기():
 
 #===상태출력===
 def 상태보기():
-    print("===상태===")
-    print(f"HP:     {protagonist['HP']}")
-    print(f"계좌 잔액:      {protagonist['주머니']['체크카드']['계좌잔액']}원")
-
+    현재좌표 = protagonist["현재위치"]
+    print("=== 상태 ===")
+    print(f"HP: {protagonist['HP']}")
+    print(f"계좌 잔액: {protagonist['주머니']['체크카드']['계좌잔액']}원")
+    print(f"현재 위치: {game_map[현재좌표]}")
+    
+    print("--- 이웃 칸 ---")
+    for 방향, (행변화, 열변화) in 방향키.items():
+        이웃좌표 = (현재좌표[0] + 행변화, 현재좌표[1] + 열변화)
+        if 이웃좌표 in game_map:
+            print(f"{방향}: {game_map[이웃좌표]}")
+        else:
+            print(f"{방향}: 막혀있음")
 
 #===상호작용===
 장소상호작용 = {
