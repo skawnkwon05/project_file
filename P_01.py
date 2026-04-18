@@ -1,3 +1,32 @@
+import json
+
+
+#===입력기록리스트===
+입력기록 = []
+
+
+#===저장====
+def 게임저장():
+    저장데이터 = {
+        "protagonist": {
+            "배고픔": protagonist["배고픔"],
+            "HP": protagonist["HP"],
+            "현재위치": protagonist["현재위치"],
+            "가방": protagonist["가방"],
+            "주머니": protagonist["주머니"],
+        },
+        "environment": {
+            "현재시각": enviroment["현재시각"]
+        },
+        "settings": {
+            "난이도": settings["난이도"]
+        },
+        "입력기록": 입력기록
+    }
+    with open("save.json", "w", encoding="utf-8") as f:
+        json.dump(저장데이터, f, ensure_ascii=False, indent=4)
+    print("저장 완료!")
+
 
 #===게임설정===
 settings = {
@@ -180,6 +209,21 @@ while True:
         상태보기()
         continue
 
+    elif 명령 == "저장":
+        게임저장()
+        continue
+
+#임의로 게임 저장%종료 버튼 만듦
+    elif 명령 == "end":
+        게임저장()
+        print("게임을 종료합니다.")
+        break
+
+#임의로 게임 종료 버튼 만듦
+    elif 명령 == "exit":
+        print("게임을 종료합니다.")
+        break
+
     elif 명령 in 방향키:
         행변화, 열변화 = 방향키[명령]
         새좌표 = (현재좌표[0] + 행변화, 현재좌표[1] + 열변화)
@@ -199,4 +243,4 @@ while True:
             상점(현재장소)
 
     else:
-        print("북/남/동/서/가방/상태 중에서 입력해줘.")
+        print("북/남/동/서/가방/상태/저장/end/exit 중에서 입력해줘.")
