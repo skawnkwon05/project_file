@@ -73,7 +73,7 @@ while True:
         print(f"난이도 {난이도}으로로 설정 완료 했습니다!")
         break
     else:
-        print("쉬움, 보통, 어려움 중에서 입력해줘.")
+        print("쉬움, 보통, 어려움 중에서 입력해주세요.")
 
 #===INTRO===
 def intro():
