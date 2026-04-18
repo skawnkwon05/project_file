@@ -1,4 +1,5 @@
 import json
+import os
 
 
 #===입력기록리스트===
@@ -26,6 +27,59 @@ def 게임저장():
     with open("save.json", "w", encoding="utf-8") as f:
         json.dump(저장데이터, f, ensure_ascii=False, indent=4)
     print("저장 완료!")
+
+
+#===불러오기===
+def 불러오기():
+    print("=== 저장 파일 목록 ===")
+    
+    # 현재 폴더의 json 파일 목록
+    json파일들 = [f for f in os.listdir(".") if f.endswith(".json")]
+    
+    if len(json파일들) == 0:
+        print("현재 폴더에 저장 파일이 없어.")
+    else:
+        for i, 파일 in enumerate(json파일들):
+            print(f"{i+1}. {파일}")
+    
+    print("-----")
+    파일입력 = input("숫자 입력 (현재폴더) 또는 경로 직접 입력: ")
+    
+    # 숫자로 입력한 경우
+    if 파일입력.isdigit():
+        인덱스 = int(파일입력) - 1
+        if 0 <= 인덱스 < len(json파일들):
+            파일경로 = json파일들[인덱스]
+        else:
+            print("없는 번호야.")
+            return
+    else:
+        # 경로 직접 입력 (상대경로, 절대경로 모두 가능)
+        파일경로 = 파일입력
+
+    # 파일 불러오기
+    try:
+        with open(파일경로, "r", encoding="utf-8") as f:
+            저장데이터 = json.load(f)
+        
+        # 각 변수에 할당
+        protagonist["배고픔"] = 저장데이터["protagonist"]["배고픔"]
+        protagonist["HP"] = 저장데이터["protagonist"]["HP"]
+        protagonist["현재위치"] = tuple(저장데이터["protagonist"]["현재위치"])
+        protagonist["가방"] = 저장데이터["protagonist"]["가방"]
+        protagonist["주머니"] = 저장데이터["protagonist"]["주머니"]
+
+        enviroment["현재시각"] = 저장데이터["environment"]["현재시각"]
+        settings["난이도"] = 저장데이터["settings"]["난이도"]
+        입력기록.clear()
+        입력기록.extend(저장데이터["입력기록"])
+
+        print(f"불러오기 완료! 현재 위치: {game_map[protagonist['현재위치']]}")
+
+    except FileNotFoundError:
+        print("파일을 찾을 수 없어.")
+    except Exception as e:
+        print(f"불러오기 실패: {e}")
 
 
 #===게임설정===
@@ -224,6 +278,10 @@ while True:
         print("게임을 종료합니다.")
         break
 
+    elif 명령 == "불러오기":
+        불러오기()
+        continue
+
     elif 명령 in 방향키:
         행변화, 열변화 = 방향키[명령]
         새좌표 = (현재좌표[0] + 행변화, 현재좌표[1] + 열변화)
@@ -243,4 +301,4 @@ while True:
             상점(현재장소)
 
     else:
-        print("북/남/동/서/가방/상태/저장/end/exit 중에서 입력해줘.")
+        print("북/남/동/서/가방/상태/저장/불러오기/end/exit 중에서 입력해줘.")
