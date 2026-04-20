@@ -26,7 +26,8 @@ def 게임저장():
             "난이도": settings["난이도"]
         },
         "입력기록": 입력기록,
-        "임무목록": protagonist["임무목록"]
+        "임무목록": protagonist["임무목록"],
+        "입장여부": protagonist["입장여부"]
     }
     with open("save.json", "w", encoding="utf-8") as f:
         json.dump(저장데이터, f, ensure_ascii=False, indent=4)
@@ -73,6 +74,7 @@ def 불러오기():
         protagonist["가방"] = 저장데이터["protagonist"]["가방"]
         protagonist["주머니"] = 저장데이터["protagonist"]["주머니"]
         protagonist["임무목록"] = 저장데이터["임무목록"]
+        protagonist["입장여부"] = 저장데이터["입장여부"]
 
         enviroment["현재시각"] = 저장데이터["environment"]["현재시각"]
         settings["난이도"] = 저장데이터["settings"]["난이도"]
@@ -104,11 +106,12 @@ protagonist = {
     "주머니": {
         "체크카드": {
             "이름": "체크카드",
-            "계좌잔액": 50000
+            "계좌잔액": 10000
         }
     },
     "가방": [],
-    "임무목록": []
+    "임무목록": [],
+    "입장여부": False
 }
 
 #===MAP===
@@ -321,6 +324,7 @@ def 상호작용():
         print("1. 예")
         선택 = input("입력: ")
         if 선택 == "예" or 선택 == "1":
+            protagonist["입장여부"] = True
             print("학교에 입장했다.")
         else:
             print("입장을 취소했다.")
@@ -397,8 +401,22 @@ while True:
         if 새좌표 not in game_map:
             print("그 방향은 막혔어.")
             continue
-    
-    
+
+        # 정문 안쪽으로 이동 시 입장 여부 체크
+        현재장소 = game_map[현재좌표]
+        다음장소 = game_map[새좌표]
+        정문안쪽 = ["백양로1", "공터1", "암병원", "의과대학",
+                   "공학관", "공학원", "백양로2", "백주년기념관",
+                   "안과병원", "제웅관", "체육관", "백양로3",
+                   "공터2", "광혜원", "어린이병원", "세브란스병원",
+                   "중앙도서관", "독수리상", "학생회관", "루스채플",
+                   "재활병원", "치과대학", "백양관", "백양로5",
+                   "대강당", "음악관", "알렌관", "ABMRC",
+                   "새천년관", "이윤재관"]
+
+        if 다음장소 in 정문안쪽 and not protagonist["입장여부"]:
+            print("정문에서 먼저 입장해야 해.")
+            continue
 
         protagonist["현재위치"] = 새좌표
         protagonist["HP"] -= 1
@@ -408,12 +426,15 @@ while True:
 
         # 정문 도착 시 임무0 자동 부여
         if 현재장소 == "정문" and "임무0" not in protagonist["임무목록"]:
-           protagonist["임무목록"].append("임무0")
-           print("\n[임무] 독수리상에서 임무를 받고 이윤재관에 보고하라!")
+            protagonist["임무목록"].append("임무0")
+            print("\n[임무] 독수리상에서 임무를 받고 이윤재관에 보고하라!")
+    
 
     elif 명령 == "상호작용":
         상호작용()
-        
+
+    #메인루프 이동 부분에 입장 체크 추가
+    
 
     else:
         print("북/남/동/서/가방/상태/저장/불러오기/end/exit 중에서 입력해줘.")
